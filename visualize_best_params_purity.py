@@ -16,15 +16,15 @@ def truncate_name(name, length=14):
 def main(birch_dir, dbstream_dir, stream_kmeans_dir):
     # Define the paths to the directories containing the datasets for each algorithm
     dirs = {
-        "predicted_birch": birch_dir,
-        "predicted_dbstream": dbstream_dir,
-        "predicted_stream_kmeans": stream_kmeans_dir
+        "birch": birch_dir,
+        "dbstream": dbstream_dir,
+        "stream_kmeans": stream_kmeans_dir
     }
 
     # Get datasets for each algorithm
-    datasets_birch = get_datasets(dirs["predicted_birch"])
-    datasets_dbstream = get_datasets(dirs["predicted_dbstream"])
-    datasets_stream_kmeans = get_datasets(dirs["predicted_stream_kmeans"])
+    datasets_birch = get_datasets(dirs["birch"])
+    datasets_dbstream = get_datasets(dirs["dbstream"])
+    datasets_stream_kmeans = get_datasets(dirs["stream_kmeans"])
 
     # Ensure the datasets are the same across all directories
     if not (datasets_birch == datasets_dbstream == datasets_stream_kmeans):

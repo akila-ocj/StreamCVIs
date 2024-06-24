@@ -91,6 +91,11 @@ run dbstream:  `./run_clustering_dbstream.sh grouped_processed_data+dataset_shif
 run streamKMeans:  `./run_clustering_stream_kmeans.sh grouped_processed_data+dataset_shift/ predicted_stream_kmeans`
 
 ## Step 8 - plot clustering results for each dataset
+We visualize the best purity achieved by each clustering algorithm as a histogram to validate our clustering algorithm accuracy
+run: `python visualize_best_params_purity.py predicted_birch/ predicted_dbstream/ predicted_stream_kmeans/`
+
+We visualize GT (Ground Truth), and predicted results from each clustering algorithm for all the datasets with and without dataset shift
+run: `python visualize_last_step_clustering_results.py predicted_birch/ predicted_dbstream/ predicted_stream_kmeans/ plots_predicted_last_step`
 
 ## Step 8 - compute CVIs
 run: `./run_compute_CVIs+running_time.sh ./predicted_birch/ predicted_birch+CVIs predicted_birch+time`
