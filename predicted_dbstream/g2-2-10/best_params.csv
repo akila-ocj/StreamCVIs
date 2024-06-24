@@ -1,0 +1,2 @@
+clustering_threshold,fading_factor,cleanup_interval,intersection_factor,minimum_weight,purity
+0.8,0.05,15,0.8,0.75,1.0

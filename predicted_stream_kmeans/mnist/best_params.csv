@@ -1,0 +1,2 @@
+n_clusters,chunk_size,halflife,mu,sigma,p,purity
+10,100,0.9,0,0.1,1.5,0.7014285714285714
