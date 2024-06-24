@@ -49,7 +49,7 @@ def compute_correlation(df, cvi_metric, method='pearson'):
             for warning in w:
                 if "An input array is constant" in str(warning.message):
                     return '--'   # An input array is constant; the correlation coefficient is not defined
-            return correlation
+            return round(correlation, 2)
     except ValueError:
         return '--'  # x and y must have length at least 2
 
