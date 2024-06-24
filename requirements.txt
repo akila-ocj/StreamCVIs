@@ -1,0 +1,11 @@
+numpy
+pandas
+river
+scikit-learn
+tqdm
+scipy
+matplotlib
+seaborn
+cvi
+imageio
+sns

@@ -90,6 +90,7 @@ run bitch:  `./run_clustering_birch.sh grouped_processed_data+dataset_shift/ pre
 run dbstream:  `./run_clustering_dbstream.sh grouped_processed_data+dataset_shift/ predicted_dbstream`
 run streamKMeans:  `./run_clustering_stream_kmeans.sh grouped_processed_data+dataset_shift/ predicted_stream_kmeans`
 
+## Step 8 - plot clustering results for each dataset
 
 ## Step 8 - compute CVIs
 run: `./run_compute_CVIs+running_time.sh ./predicted_birch/ predicted_birch+CVIs predicted_birch+time`
