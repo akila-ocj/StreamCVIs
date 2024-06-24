@@ -118,14 +118,18 @@ def main(birch_dir, dbstream_dir, stream_kmeans_dir, output_dir):
             print(f"Skipping {dataset_name} due to missing files.")
             continue
 
-        # Filter dataset conditions
-        conditions = ['mild_gaussian-noise', 'mild_knock-out', 'moderate_gaussian-noise', 'moderate_knock-out', 'severe_gaussian-noise', 'severe_knock-out']
+        # Filter dataset conditions, including the no-shift condition
+        conditions = ['no_shift', 'mild_gaussian-noise', 'mild_knock-out', 'moderate_gaussian-noise', 'moderate_knock-out', 'severe_gaussian-noise', 'severe_knock-out']
 
         for condition in conditions:
-            # Get the files corresponding to the condition
-            condition_birch_files = [file for file in birch_files if condition in file]
-            condition_dbstream_files = [file for file in dbstream_files if condition in file]
-            condition_streamkmeans_files = [file for file in streamkmeans_files if condition in file]
+            if condition == 'no_shift':
+                condition_birch_files = [file for file in birch_files if 'transformed_' + dataset_name + '.csv_predicted.csv' in file]
+                condition_dbstream_files = [file for file in dbstream_files if 'transformed_' + dataset_name + '.csv_predicted.csv' in file]
+                condition_streamkmeans_files = [file for file in streamkmeans_files if 'transformed_' + dataset_name + '.csv_predicted.csv' in file]
+            else:
+                condition_birch_files = [file for file in birch_files if condition in file]
+                condition_dbstream_files = [file for file in dbstream_files if condition in file]
+                condition_streamkmeans_files = [file for file in streamkmeans_files if condition in file]
 
             if not (condition_birch_files and condition_dbstream_files and condition_streamkmeans_files):
                 print(f"Skipping condition {condition} for dataset {dataset_name} due to missing files.")
