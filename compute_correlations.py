@@ -53,6 +53,39 @@ def compute_correlation(df, cvi_metric, method='pearson'):
     except ValueError:
         return '--'  # x and y must have length at least 2
 
+def save_correlations(correlation_results, all_datasets, output_dir, method):
+    """Save the correlation results to CSV files."""
+    correlation_df = pd.DataFrame(correlation_results)
+
+    # Replace '--' with np.nan for the pivot operation
+    correlation_df['Correlation'] = correlation_df['Correlation'].replace('--', np.nan)
+
+    # Pivot the DataFrame to create the desired table format
+    pivot_df = correlation_df.pivot_table(index=["Dataset"], columns=["CVI", "Algorithm"], values="Correlation")
+
+    # Flatten the multi-level columns
+    pivot_df.columns = ['_'.join(col).strip() for col in pivot_df.columns.values]
+
+    # Replace np.nan back to '--'
+    pivot_df = pivot_df.fillna('--')
+
+    # Ensure all datasets are present in the index
+    pivot_df = pivot_df.reindex(all_datasets, fill_value='--')
+
+    # Save the full dataset correlations
+    full_output_file = os.path.join(output_dir, f'cvi_purity_correlations_{method}_all.csv')
+    pivot_df.to_csv(full_output_file)
+    print(f"{method.capitalize()} correlation results for all datasets saved to {full_output_file}")
+
+    # Filter datasets without shift
+    no_shift_datasets = [dataset for dataset in all_datasets if not any(shift in dataset for shift in ['mild_gaussian-noise', 'mild_knock-out', 'moderate_gaussian-noise', 'moderate_knock-out', 'severe_gaussian-noise', 'severe_knock-out'])]
+    no_shift_pivot_df = pivot_df.loc[no_shift_datasets]
+
+    # Save the no shift dataset correlations
+    no_shift_output_file = os.path.join(output_dir, f'cvi_purity_correlations_{method}_no_shift.csv')
+    no_shift_pivot_df.to_csv(no_shift_output_file)
+    print(f"{method.capitalize()} correlation results for datasets without shift saved to {no_shift_output_file}")
+
 def main(birch_cvi_dir, dbstream_cvi_dir, stream_kmeans_cvi_dir, output_dir):
     # Define the paths to the directories containing the CVI data for each algorithm
     dirs = {
@@ -103,30 +136,9 @@ def main(birch_cvi_dir, dbstream_cvi_dir, stream_kmeans_cvi_dir, output_dir):
                             "Correlation": '--'
                         })
 
-    # Create and save DataFrames for each correlation method
-    for method, records in correlation_results.items():
-        correlation_df = pd.DataFrame(records)
-
-        # Replace '--' with np.nan for the pivot operation
-        correlation_df['Correlation'] = correlation_df['Correlation'].replace('--', np.nan)
-
-        # Pivot the DataFrame to create the desired table format
-        pivot_df = correlation_df.pivot_table(index=["Dataset"], columns=["CVI", "Algorithm"], values="Correlation")
-
-        # Flatten the multi-level columns
-        pivot_df.columns = ['_'.join(col).strip() for col in pivot_df.columns.values]
-
-        # Replace np.nan back to '--'
-        pivot_df = pivot_df.fillna('--')
-
-        # Ensure all datasets are present in the index
-        pivot_df = pivot_df.reindex(all_datasets).fillna('--')
-
-        # Save the results to a CSV file
-        output_file = os.path.join(output_dir, f'cvi_purity_correlations_{method}.csv')
-        pivot_df.to_csv(output_file)
-
-        print(f"{method.capitalize()} correlation results saved to {output_file}")
+    # Save correlations for each method
+    for method in correlation_results.keys():
+        save_correlations(correlation_results[method], all_datasets, output_dir, method)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Compute correlations between CVIs and purity score.')
