@@ -32,9 +32,10 @@ contains namely:
 ```
 
 ## Step 1 - process data
+We process data using sklearn implementation of StandardScalar and divide the dataset to three subsets namely train, validate and test. Were we append this subset label as the last column of the dataset
 run: `./run_process_data.sh data processed_data`
 
-`processed_data` folder contains csv files with train, validate and test sets
+`processed_data` folder contains csv files with train, validate and test sets. -2 index contains the ground truth label and -1 index contains train,test,validate label
 
 An example csv:
 ```csv
@@ -52,11 +53,13 @@ An example csv:
 
 
 ## Step 2 - plot processed data
+We visualize how data are divided among train, validate and test sets
 run: `./run_visualize_processed_data.sh processed_data/ plots_processed_data`
 
 `plots_processed_data` contains `.png` files, each representing a plot of a dataset with true cluster labels
 
 ## Step 3 - apply gaussian and knock-out datasets shifts
+We simulate dataset shit by applying gaussian and knock-out shifts to a fraction of our test set
 To apply gaussian noise,
 run: `./run_apply_dataset_shift_gau.sh processed_data/ processed_data+dataset_shift_gau 0.5
 `
@@ -64,13 +67,14 @@ To apply knock-out,
 run: `./run_apply_dataset_shift_knock.sh processed_data/ processed_data+dataset_shift_knock half`
 
 ## Step 4 - plot gaussian and knock-out datasets shifts
-
+We visualize mild, moderate and severe dataset shifts we applied in the previous step
 run: `./run_visualize_dataset_shifts_gau.sh processed_data+dataset_shift_gau/ plots_dataset_shift`
 
 run: `./run_visualize_dataset_shifts_knock.sh processed_data+dataset_shift_knock/ plots_dataset_shift`
 
-## Step 5 - copy all datasets to an one folder
 
+Step 5 and 6 are intermediate steps we perform before we perform clustering
+## Step 5 - copy all datasets to a one folder
 To copy all contents from `processed_data` to `processed_data+dataset_shift`, so that we can use the `processed_data+dataset_shift` folder to group all datasets by their names
 run: `cp -r processed_data/* processed_data+dataset_shift/` run: `cp -r processed_data+dataset_shift_gau/* processed_data+dataset_shift/` run: `cp -r processed_data+dataset_shift_knock/* processed_data+dataset_shift/` 
 
@@ -81,6 +85,7 @@ run: `python group_processed_data.py processed_data+dataset_shift/ grouped_proce
 
 
 ## Step 7 - perform clustering
+We perform online clustering on the datasets with and without dataset shift
 run bitch:  `./run_clustering_birch.sh grouped_processed_data+dataset_shift/ predicted_birch`
 run dbstream:  `./run_clustering_dbstream.sh grouped_processed_data+dataset_shift/ predicted_dbstream`
 run streamKMeans:  `./run_clustering_stream_kmeans.sh grouped_processed_data+dataset_shift/ predicted_stream_kmeans`
