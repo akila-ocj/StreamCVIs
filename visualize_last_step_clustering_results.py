@@ -144,12 +144,9 @@ def main(birch_dir, dbstream_dir, stream_kmeans_dir, output_dir):
             dbstream_df['MappedPredictedLabel'] = map_clusters_to_ground_truth(dbstream_df['TrueLabel'], dbstream_df['PredictedLabel'])
             streamkmeans_df['MappedPredictedLabel'] = map_clusters_to_ground_truth(streamkmeans_df['TrueLabel'], streamkmeans_df['PredictedLabel'])
 
-            # Create condition-specific output directory
-            condition_output_dir = os.path.join(output_dir, f'{dataset_name}_{condition}')
-            os.makedirs(condition_output_dir, exist_ok=True)
 
             # Visualize the true and predicted labels
-            output_path = os.path.join(condition_output_dir, f'visualization_{dataset_name}_{condition}.png')
+            output_path = os.path.join(output_dir, f'visualization_{dataset_name}_{condition}.png')
             visualize_labels(true_labels, birch_df, streamkmeans_df, dbstream_df, output_path)
 
 if __name__ == "__main__":
