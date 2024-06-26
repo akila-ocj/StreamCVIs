@@ -106,3 +106,7 @@ run: `./run_compute_CVIs+running_time.sh ./predicted_dbstream/ predicted_dbstrea
 run: `./run_compute_CVIs+running_time.sh ./predicted_stream_kmeans/ predicted_stream_kmeans+CVIs predicted_stream_kmeans+time`
 
 ## Step 9 - compute correlations
+run `python compute_correlations.py predicted_birch+CVIs/ predicted_dbstream+CVIs/ predicted_stream_kmeans+CVIs/ computed_correlations/ `
+
+## Step 1- - plot computed correlations
+run `python visualize_CVIs_whisker_plot.py computed_correlations2/ plots_computed_correlation/`
