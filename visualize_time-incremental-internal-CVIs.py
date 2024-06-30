@@ -6,10 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Define the CVI metrics in the desired order
-cvi_metrics = ['adjusted_rand_index', 'jaccard_index', 'fowlkes_mallows_index', 'homogeneity_score',
-               'normalized_mutual_info_score', 'v_measure_score',
-               'davies_bouldin_score', 'iDB', 'iWB', 'iXB', 'irCIP', 'silhouette_score'
-               ]
+cvi_metrics = ['iDB', 'iWB', 'iXB', 'irCIP']
 
 # Mapping of CVI metrics to their acronyms
 cvi_acronyms = {
@@ -25,7 +22,6 @@ cvi_acronyms = {
     'adjusted_mutual_info_score': 'AMI'
 }
 
-
 def read_csv_files(directory):
     """Read all CSV files in the given directory and return a concatenated DataFrame."""
     csv_files = [os.path.join(directory, file) for file in os.listdir(directory) if file.endswith('.csv')]
@@ -36,11 +32,10 @@ def read_csv_files(directory):
         df_list.append(df)
     return pd.concat(df_list, ignore_index=True)
 
-
 def remove_outliers(df):
     """Remove outliers from the DataFrame using the IQR method."""
     for cvi in cvi_metrics:
-        if cvi in df.columns:
+        if (cvi in df.columns) and (not df[cvi].isnull().all()):  # Check if column exists and is not all NaNs
             Q1 = df[cvi].quantile(0.25)
             Q3 = df[cvi].quantile(0.75)
             IQR = Q3 - Q1
@@ -48,7 +43,6 @@ def remove_outliers(df):
             upper_bound = Q3 + 1.5 * IQR
             df = df[(df[cvi] >= lower_bound) & (df[cvi] <= upper_bound)]
     return df
-
 
 def process_data(df):
     """Process the data for plotting."""
@@ -67,7 +61,6 @@ def process_data(df):
 
     return pd.DataFrame(plot_data)
 
-
 def generate_whisker_plot(data, output_dir):
     """Generate a whisker plot for all CVIs and save it in the output directory."""
     # Ensure that 'CVI' is treated as categorical data
@@ -77,20 +70,22 @@ def generate_whisker_plot(data, output_dir):
     data['CVI_label'] = data['CVI'].map(lambda x: cvi_acronyms.get(x, x))
 
     # Set up the plot
-    plt.figure(figsize=(16, 9))
+    plt.figure(figsize=(4, 3))
     sns.boxplot(x="CVI_label", y="Value", data=data, palette="Set2",
                 order=[cvi_acronyms.get(x, x) for x in cvi_metrics])
-    plt.xticks(rotation=0, fontsize=12)
-    plt.yticks(fontsize=12)
+    plt.xticks(rotation=0, fontsize=6)
+    plt.yticks(fontsize=6)
     plt.xlabel('CVI', fontsize=0)
-    plt.ylabel('Time (Seconds)', fontsize=12)
+    plt.ylabel('Time (Seconds)', fontsize=6)
+
+    # Ensure the output directory exists
+    os.makedirs(output_dir, exist_ok=True)
 
     # Save the plot
     output_file = os.path.join(output_dir, 'combined_cvi_whisker_plot.png')
     plt.tight_layout()
     plt.savefig(output_file, dpi=300)
     plt.show()
-
 
 def generate_bar_chart(data, output_dir, statistic='mean'):
     """Generate a bar chart for the mean or median of all CVIs and save it in the output directory."""
@@ -109,20 +104,22 @@ def generate_bar_chart(data, output_dir, statistic='mean'):
     cvi_stat_df['CVI_label'] = cvi_stat_df['CVI'].map(lambda x: cvi_acronyms.get(x, x))
 
     # Set up the plot
-    plt.figure(figsize=(16, 9))
+    plt.figure(figsize=(4, 3))
     sns.barplot(x='CVI_label', y='Value', data=cvi_stat_df, palette="Set2",
                 order=[cvi_acronyms.get(x, x) for x in cvi_metrics])
-    plt.xticks(rotation=90)
-    plt.xlabel('CVI', fontsize=14)
-    plt.ylabel(f'{statistic.capitalize()} Value', fontsize=14)
-    plt.title(f'{statistic.capitalize()} CVI Values for Different Clustering Algorithms', fontsize=18)
+    plt.xticks(rotation=0, fontsize=6)
+    plt.yticks(fontsize=6)
+    plt.xlabel('CVI', fontsize=0)
+    plt.ylabel('Time (Seconds)', fontsize=6)
+
+    # Ensure the output directory exists
+    os.makedirs(output_dir, exist_ok=True)
 
     # Save the plot
     output_file = os.path.join(output_dir, f'combined_cvi_{statistic}_bar_chart.png')
     plt.tight_layout()
     plt.savefig(output_file, dpi=300)
     plt.show()
-
 
 def main(birch_dir, dbstream_dir, stream_kmeans_dir, output_dir):
     # Read CSV files from each directory
@@ -145,8 +142,6 @@ def main(birch_dir, dbstream_dir, stream_kmeans_dir, output_dir):
     # Generate bar charts for mean and median
     generate_bar_chart(plot_data, output_dir, statistic='mean')
     generate_bar_chart(plot_data, output_dir, statistic='median')
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

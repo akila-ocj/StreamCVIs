@@ -22,7 +22,7 @@ cvi_acronyms = {
     'adjusted_rand_index': 'ARI',
     'jaccard_index': 'Jaccard',
     'fowlkes_mallows_index': 'FMI',
-    'homogeneity_score': 'HomoG',
+    'homogeneity_score': 'Homogeneity',
     'normalized_mutual_info_score': 'NMI',
     'v_measure_score': 'V-measure',
     'iDB': 'iDB',
@@ -77,7 +77,7 @@ def process_csv(file_path, output_dir, cvi_type):
     plt.xticks(rotation=0, fontsize=6)  # Reduced font size for x-axis values
     plt.yticks(fontsize=6)  # Reduced font size for y-axis values
     plt.xlabel('CVI', fontsize=0)  # Reduced font size for x-axis label
-    plt.ylabel('Correlation with Purity', fontsize=5)  # Reduced font size for y-axis label
+    plt.ylabel('Correlation with Purity (CwP)', fontsize=6)  # Reduced font size for y-axis label
     plt.legend(prop={'size': 6})  # Reduced legend font size
 
     # Add horizontal dotted lines at every 0.25 correlation value
